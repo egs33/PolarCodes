@@ -1,2 +1,2 @@
-set(SOURCE_FILES Channel.cpp GnCosetCode.cpp)
+set(SOURCE_FILES main.cpp Channel.cpp GnCosetCode.cpp)
 add_executable(polar_code ${SOURCE_FILES})
