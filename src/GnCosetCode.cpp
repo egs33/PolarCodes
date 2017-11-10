@@ -60,3 +60,15 @@ std::vector<int> GnCosetCode::encodeInner(std::vector<int> u) {
     return ret;
 }
 
+unsigned int GnCosetCode::getLength() const {
+    return length;
+}
+
+const std::vector<int> &GnCosetCode::getInformationSet() const {
+    return informationSet;
+}
+
+const std::vector<int> &GnCosetCode::getFrozenBits() const {
+    return frozenBits;
+}
+
