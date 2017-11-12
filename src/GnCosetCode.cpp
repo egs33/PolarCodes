@@ -3,6 +3,9 @@
 #include "GnCosetCode.h"
 #include "Channel.h"
 
+
+GnCosetCode::GnCosetCode() = default;
+
 GnCosetCode::GnCosetCode(unsigned int length, std::vector<int> informationSet, std::vector<int> frozenBits) :
         length(length), informationSet(informationSet), frozenBits(frozenBits) {
     if (length != informationSet.size() + frozenBits.size()) {

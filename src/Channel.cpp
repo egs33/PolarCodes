@@ -96,7 +96,7 @@ double BEC::w(int y, int x) {
     return 0;
 }
 
-double BEC::symmetricCapacity(int n, int i) {
+double BEC::symmetricCapacity(int n, int i) const {
     if (n == 1) {
         return 1 - p;
     }
@@ -133,7 +133,7 @@ double BSC::w(int y, int x) {
     return 0;
 }
 
-double BSC::symmetricCapacity(int n, int i) {
+double BSC::symmetricCapacity(int n, int i) const {
     // Unimplemented
     return 0;
 }

@@ -4,10 +4,12 @@
 #include <vector>
 
 class GnCosetCode {
-private:
+protected:
     unsigned int length;
     std::vector<int> informationSet;
     std::vector<int> frozenBits;
+
+    GnCosetCode();
 
 public:
     GnCosetCode(unsigned int length, std::vector<int> informationSet, std::vector<int> frozenBits);

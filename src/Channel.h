@@ -43,9 +43,9 @@ public:
      * @param i index(0,...n-1)
      * @return
      */
-    virtual double symmetricCapacity(int n, int i) = 0;
+    virtual double symmetricCapacity(int n, int i) const = 0;
 
-    static virtual std::vector<int> combine(std::vector<int> u) final;
+    static std::vector<int> combine(std::vector<int> u);
 };
 
 class BEC : public Channel {
@@ -58,7 +58,7 @@ public:
 
     double w(int y, int x) override;
 
-    double symmetricCapacity(int n, int i) override;
+    double symmetricCapacity(int n, int i) const override;
 };
 
 class BSC : public Channel {
@@ -71,7 +71,7 @@ public:
 
     double w(int y, int x) override;
 
-    double symmetricCapacity(int n, int i) override;
+    double symmetricCapacity(int n, int i) const override;
 };
 
 
