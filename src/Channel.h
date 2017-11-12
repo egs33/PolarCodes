@@ -37,6 +37,14 @@ public:
      */
     double w(int length, std::vector<int> y, std::vector<int> u, int bit);
 
+    /**
+     *
+     * @param n length
+     * @param i index(0,...n-1)
+     * @return
+     */
+    virtual double symmetricCapacity(int n, int i) = 0;
+
     static virtual std::vector<int> combine(std::vector<int> u) final;
 };
 
@@ -49,6 +57,8 @@ public:
     std::vector<int> channel(std::vector<int> x) override;
 
     double w(int y, int x) override;
+
+    double symmetricCapacity(int n, int i) override;
 };
 
 class BSC : public Channel {
@@ -60,6 +70,8 @@ public:
     std::vector<int> channel(std::vector<int> x) override;
 
     double w(int y, int x) override;
+
+    double symmetricCapacity(int n, int i) override;
 };
 
 

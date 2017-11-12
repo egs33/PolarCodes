@@ -96,6 +96,17 @@ double BEC::w(int y, int x) {
     return 0;
 }
 
+double BEC::symmetricCapacity(int n, int i) {
+    if (n == 1) {
+        return 1 - p;
+    }
+    if (i % 2 == 0) {
+        return std::pow(symmetricCapacity(n / 2, i / 2), 2);
+    }
+    double temp = symmetricCapacity(n / 2, (i - 1) / 2);
+    return 2 * temp - std::pow(temp, 2);
+}
+
 
 BSC::BSC(double p) : p(p) {}
 
@@ -119,5 +130,10 @@ double BSC::w(int y, int x) {
     } else if (y == 1 - x) {
         return p;
     }
+    return 0;
+}
+
+double BSC::symmetricCapacity(int n, int i) {
+    // Unimplemented
     return 0;
 }
