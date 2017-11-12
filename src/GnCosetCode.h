@@ -9,8 +9,6 @@ private:
     std::vector<int> informationSet;
     std::vector<int> frozenBits;
 
-    std::vector<int> encodeInner(std::vector<int> u);
-
 public:
     GnCosetCode(unsigned int length, std::vector<int> informationSet, std::vector<int> frozenBits);
 
