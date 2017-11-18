@@ -2,6 +2,7 @@
 #define POLARCODE_GNCOSETCODE_H
 
 #include <vector>
+#include "Channel.h"
 
 class GnCosetCode {
 protected:
@@ -23,6 +24,8 @@ public:
     const std::vector<int> &getInformationSet() const;
 
     const std::vector<int> &getFrozenBits() const;
+
+    virtual std::vector<int> SuccessiveCancellationDecode(std::vector<int> &y, Channel &channel);
 
 };
 

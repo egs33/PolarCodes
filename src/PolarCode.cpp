@@ -6,9 +6,10 @@ bool AscSecondElement(const std::pair<int, double> &left, const std::pair<int, d
     return left.second > right.second;
 }
 
-PolarCode::PolarCode(unsigned int length, unsigned int codeDimension, const Channel &channel) {
+PolarCode::PolarCode(unsigned int length, unsigned int codeDimension, Channel &channel) : channel(channel) {
     this->frozenBits = std::vector<int>(length - codeDimension);
     this->length = length;
+    this->channel = channel;
     std::vector<std::pair<int, double >> symmetricCapacities(length);
     for (int i = 0; i < length; ++i) {
         symmetricCapacities[i] = std::make_pair(i, channel.symmetricCapacity(length, i));
@@ -20,4 +21,8 @@ PolarCode::PolarCode(unsigned int length, unsigned int codeDimension, const Chan
         this->informationSet[i] = symmetricCapacities[i].first;
     }
     std::sort(this->informationSet.begin(), this->informationSet.end());
+}
+
+std::vector<int> PolarCode::SuccessiveCancellationDecode(std::vector<int> &y) {
+    return GnCosetCode::SuccessiveCancellationDecode(y, channel);
 }

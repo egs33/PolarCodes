@@ -6,11 +6,12 @@
 #include "Channel.h"
 
 class PolarCode : public GnCosetCode {
+protected:
+    Channel &channel;
 public:
-    PolarCode(unsigned int length, unsigned int codeDimension, const Channel &channel);
+    PolarCode(unsigned int length, unsigned int codeDimension, Channel &channel);
 
-public:
-
+    std::vector<int> SuccessiveCancellationDecode(std::vector<int> &y);
 };
 
 
