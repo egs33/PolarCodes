@@ -29,7 +29,7 @@ std::vector<int> GnCosetCode::encode(const std::vector<int> &information) const 
     }
     std::vector<int> u(this->length);
     for (int i = 0, informationIndex = 0; i < this->length; ++i) {
-        if (this->informationSet[informationIndex] == i) {
+        if (informationSet.size() > informationIndex && this->informationSet[informationIndex] == i) {
             u[i] = information[informationIndex];
             ++informationIndex;
         } else {
@@ -55,7 +55,7 @@ std::vector<int> GnCosetCode::SuccessiveCancellationDecode(const std::vector<int
     std::vector<int> decoded, ret;
     std::vector<int> information(getInformationSet().size());
     for (int i = 0, informationIndex = 0; i < getLength(); ++i) {
-        if (i == getInformationSet()[informationIndex]) {
+        if (getInformationSet().size() > informationIndex && i == getInformationSet()[informationIndex]) {
             int decodedBit = channel.w(getLength(), y, decoded, 0) >= channel.w(getLength(), y, decoded, 1) ? 0 : 1;
             decoded.push_back(decodedBit);
             ret.push_back(decodedBit);
