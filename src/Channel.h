@@ -52,7 +52,7 @@ class BEC : public Channel {
 private:
     double p;
 public:
-    BEC(double p);
+    explicit BEC(double p);
 
     std::vector<int> channel(const std::vector<int> &x) const override;
 
@@ -65,7 +65,7 @@ class BSC : public Channel {
 private:
     double p;
 public:
-    BSC(double p);
+    explicit BSC(double p);
 
     std::vector<int> channel(const std::vector<int> &x) const override;
 
