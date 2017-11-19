@@ -17,7 +17,7 @@ public:
 
     GnCosetCode(unsigned int length, std::vector<int> informationSet);
 
-    std::vector<int> encode(std::vector<int> information);
+    std::vector<int> encode(const std::vector<int> &information) const;
 
     unsigned int getLength() const;
 
@@ -25,7 +25,7 @@ public:
 
     const std::vector<int> &getFrozenBits() const;
 
-    virtual std::vector<int> SuccessiveCancellationDecode(std::vector<int> &y, Channel &channel);
+    virtual std::vector<int> SuccessiveCancellationDecode(const std::vector<int> &y, Channel &channel) const;
 
 };
 

@@ -11,7 +11,7 @@ protected:
 public:
     PolarCode(unsigned int length, unsigned int codeDimension, Channel &channel);
 
-    std::vector<int> SuccessiveCancellationDecode(std::vector<int> &y);
+    std::vector<int> SuccessiveCancellationDecode(const std::vector<int> &y) const;
 };
 
 

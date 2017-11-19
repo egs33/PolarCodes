@@ -23,7 +23,7 @@ GnCosetCode::GnCosetCode(unsigned int length, std::vector<int> informationSet) :
     this->frozenBits = std::vector<int>(length - informationSet.size(), 0);
 }
 
-std::vector<int> GnCosetCode::encode(std::vector<int> information) {
+std::vector<int> GnCosetCode::encode(const std::vector<int> &information) const {
     if (this->informationSet.size() != information.size()) {
         throw std::invalid_argument("invalid length");
     }
@@ -51,7 +51,7 @@ const std::vector<int> &GnCosetCode::getFrozenBits() const {
     return frozenBits;
 }
 
-std::vector<int> GnCosetCode::SuccessiveCancellationDecode(std::vector<int> &y, Channel &channel) {
+std::vector<int> GnCosetCode::SuccessiveCancellationDecode(const std::vector<int> &y, Channel &channel) const {
     std::vector<int> decoded, ret;
     std::vector<int> information(getInformationSet().size());
     for (int i = 0, informationIndex = 0; i < getLength(); ++i) {
