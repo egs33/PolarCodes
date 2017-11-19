@@ -9,7 +9,7 @@ public:
      * @param std:vector<int> x input of channel
      * @return output of channel
      */
-    virtual std::vector<int> channel(std::vector<int> x) = 0;
+    virtual std::vector<int> channel(const std::vector<int> &x) const = 0;
 
     /**
      * calc likelihood
@@ -17,7 +17,7 @@ public:
      * @param x
      * @return
      */
-    virtual double w(int y, int x) = 0;
+    virtual double w(int y, int x) const = 0;
 
     /**
      * calc likelihood
@@ -25,7 +25,7 @@ public:
      * @param x
      * @return
      */
-    double w(std::vector<int> y, std::vector<int> x);
+    double w(const std::vector<int> &y, const std::vector<int> &x) const;
 
     /**
      * W^i_N(y,u|b)
@@ -35,7 +35,7 @@ public:
      * @param bit b
      * @return
      */
-    double w(int length, std::vector<int> y, std::vector<int> u, int bit);
+    double w(int length, const std::vector<int> &y, const std::vector<int> &u, int bit) const;
 
     /**
      *
@@ -45,7 +45,7 @@ public:
      */
     virtual double symmetricCapacity(int n, int i) const = 0;
 
-    static std::vector<int> combine(std::vector<int> u);
+    static std::vector<int> combine(const std::vector<int> &u);
 };
 
 class BEC : public Channel {
@@ -54,9 +54,9 @@ private:
 public:
     BEC(double p);
 
-    std::vector<int> channel(std::vector<int> x) override;
+    std::vector<int> channel(const std::vector<int> &x) const override;
 
-    double w(int y, int x) override;
+    double w(int y, int x) const override;
 
     double symmetricCapacity(int n, int i) const override;
 };
@@ -67,9 +67,9 @@ private:
 public:
     BSC(double p);
 
-    std::vector<int> channel(std::vector<int> x) override;
+    std::vector<int> channel(const std::vector<int> &x) const override;
 
-    double w(int y, int x) override;
+    double w(int y, int x) const override;
 
     double symmetricCapacity(int n, int i) const override;
 };

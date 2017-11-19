@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 
-double Channel::w(std::vector<int> y, std::vector<int> x) {
+double Channel::w(const std::vector<int> &y, const std::vector<int> &x) const {
     if (y.size() != x.size()) {
         throw std::invalid_argument("different size");
     }
@@ -31,7 +31,7 @@ std::vector<std::vector<int>> createAllBitPatterns(int length) {
     return ret;
 }
 
-double Channel::w(int length, std::vector<int> y, std::vector<int> u, int bit) {
+double Channel::w(int length, const std::vector<int> &y, const std::vector<int> &u, int bit) const {
     double sum = 0;
     std::vector<std::vector<int>> allBitPatterns = createAllBitPatterns(length - u.size() - 1);
     for (const std::vector<int> &v : allBitPatterns) {
@@ -45,7 +45,7 @@ double Channel::w(int length, std::vector<int> y, std::vector<int> u, int bit) {
     return sum / allBitPatterns.size();
 }
 
-std::vector<int> Channel::combine(std::vector<int> u) {
+std::vector<int> Channel::combine(const std::vector<int> &u) {
     std::vector<int> ret(u.size());
     if (u.size() == 1) {
         ret[0] = u[0];
@@ -72,7 +72,7 @@ std::vector<int> Channel::combine(std::vector<int> u) {
 
 BEC::BEC(double p) : p(p) {}
 
-std::vector<int> BEC::channel(std::vector<int> x) {
+std::vector<int> BEC::channel(const std::vector<int> &x) const {
     std::vector<int> ret(x.size());
     std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
     std::uniform_real_distribution<double> random(0.0, 1.0);
@@ -87,7 +87,7 @@ std::vector<int> BEC::channel(std::vector<int> x) {
     return ret;
 }
 
-double BEC::w(int y, int x) {
+double BEC::w(int y, int x) const {
     if (y == x) {
         return 1 - p;
     } else if (y == 2) {
@@ -110,7 +110,7 @@ double BEC::symmetricCapacity(int n, int i) const {
 
 BSC::BSC(double p) : p(p) {}
 
-std::vector<int> BSC::channel(std::vector<int> x) {
+std::vector<int> BSC::channel(const std::vector<int> &x) const {
     std::vector<int> ret(x.size());
     std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
     std::uniform_real_distribution<double> random(0.0, 1.0);
@@ -124,7 +124,7 @@ std::vector<int> BSC::channel(std::vector<int> x) {
     return ret;
 }
 
-double BSC::w(int y, int x) {
+double BSC::w(int y, int x) const {
     if (y == x) {
         return 1 - p;
     } else if (y == 1 - x) {
