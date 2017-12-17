@@ -32,17 +32,35 @@ std::vector<std::vector<int>> createAllBitPatterns(int length) {
 }
 
 double Channel::w(int length, const std::vector<int> &y, const std::vector<int> &u, int bit) const {
-    double sum = 0;
-    std::vector<std::vector<int>> allBitPatterns = createAllBitPatterns(length - u.size() - 1);
-    for (const std::vector<int> &v : allBitPatterns) {
-        std::vector<int> temp(u);
-        temp.reserve((unsigned int) length);
-        temp.push_back(bit);
-        std::copy(v.begin(), v.end(), std::back_inserter(temp));
-        sum += this->w(y, Channel::combine(temp));
+    if (length == 2) {
+        if (u.empty()) {
+            return (w(y[0], bit) * w(y[1], 0) + w(y[0], bit ^ 1) * w(y[1], 1)) / 2;
+        } else {
+            return w(y[0], u[0] ^ bit) * w(y[1], bit) / 2;
+        }
     }
-
-    return sum / allBitPatterns.size();
+    std::vector<std::vector<int>> temp(4);
+    temp[0] = std::vector<int>(length / 2); //y[0...N/2]
+    temp[1] = std::vector<int>(length / 2); //y[N/2+1...N]
+    temp[2] = std::vector<int>(u.size() / 2); //u[0...i-1](odd)+u[0...i-1](even)
+    temp[3] = std::vector<int>(u.size() / 2); //u[0...i-1](enen)
+    for (int j = 0; j < length / 2; j++) {
+        temp[0][j] = y[j];
+        temp[1][j] = y[j + length / 2];
+    }
+    for (int j = 0; j < u.size() / 2; j++) {
+        temp[2][j] = u[2 * j] ^ u[2 * j + 1];
+        temp[3][j] = u[2 * j + 1];
+    }
+    if (u.size() % 2 == 0) {
+        double sum = 0;
+        for (int j = 0; j < 2; j++) {
+            sum += w(length / 2, temp[0], temp[2], bit ^ j) * w(length / 2, temp[1], temp[3], j) / 2;
+        }
+        return sum;
+    } else {
+        return w(length / 2, temp[0], temp[2], u[u.size() - 1] ^ bit) * w(length / 2, temp[1], temp[3], bit) / 2;
+    }
 }
 
 std::vector<int> Channel::combine(const std::vector<int> &u) {
@@ -74,7 +92,7 @@ BEC::BEC(double p) : p(p) {}
 
 std::vector<int> BEC::channel(const std::vector<int> &x) const {
     std::vector<int> ret(x.size());
-    std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
+    static std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
     std::uniform_real_distribution<double> random(0.0, 1.0);
 
     for (int i = 0; i < x.size(); ++i) {
@@ -112,7 +130,7 @@ BSC::BSC(double p) : p(p) {}
 
 std::vector<int> BSC::channel(const std::vector<int> &x) const {
     std::vector<int> ret(x.size());
-    std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
+    static std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
     std::uniform_real_distribution<double> random(0.0, 1.0);
     for (int i = 0; i < x.size(); ++i) {
         if (p > random(mt)) {
