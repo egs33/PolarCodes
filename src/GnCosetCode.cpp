@@ -67,3 +67,18 @@ std::vector<int> GnCosetCode::SuccessiveCancellationDecode(const std::vector<int
     return ret;
 }
 
+std::vector<int> GnCosetCode::LlrSCDecode(const std::vector<int> &y, Channel &channel) const {
+    std::vector<int> decoded, ret;
+    std::vector<int> information(getInformationSet().size());
+    for (int i = 0, informationIndex = 0; i < getLength(); ++i) {
+        if (getInformationSet().size() > informationIndex && i == getInformationSet()[informationIndex]) {
+            int decodedBit = channel.logLikelihoodRatio(getLength(), y, decoded) > 0 ? 0 : 1;
+            decoded.push_back(decodedBit);
+            ret.push_back(decodedBit);
+            ++informationIndex;
+        } else {
+            decoded.push_back(getFrozenBits()[i - informationIndex]);
+        }
+    }
+    return ret;
+}

@@ -39,27 +39,29 @@ double Channel::w(int length, const std::vector<int> &y, const std::vector<int> 
             return w(y[0], u[0] ^ bit) * w(y[1], bit) / 2;
         }
     }
-    std::vector<std::vector<int>> temp(4);
-    temp[0] = std::vector<int>(length / 2); //y[0...N/2]
-    temp[1] = std::vector<int>(length / 2); //y[N/2+1...N]
-    temp[2] = std::vector<int>(u.size() / 2); //u[0...i-1](odd)+u[0...i-1](even)
-    temp[3] = std::vector<int>(u.size() / 2); //u[0...i-1](enen)
+    std::vector<std::vector<int>> subVectors(4);
+    subVectors[0] = std::vector<int>(length / 2); //y[0...N/2]
+    subVectors[1] = std::vector<int>(length / 2); //y[N/2+1...N]
+    subVectors[2] = std::vector<int>(u.size() / 2); //u[0...i-1](odd)+u[0...i-1](even)
+    subVectors[3] = std::vector<int>(u.size() / 2); //u[0...i-1](enen)
     for (int j = 0; j < length / 2; j++) {
-        temp[0][j] = y[j];
-        temp[1][j] = y[j + length / 2];
+        subVectors[0][j] = y[j];
+        subVectors[1][j] = y[j + length / 2];
     }
     for (int j = 0; j < u.size() / 2; j++) {
-        temp[2][j] = u[2 * j] ^ u[2 * j + 1];
-        temp[3][j] = u[2 * j + 1];
+        subVectors[2][j] = u[2 * j] ^ u[2 * j + 1];
+        subVectors[3][j] = u[2 * j + 1];
     }
     if (u.size() % 2 == 0) {
         double sum = 0;
         for (int j = 0; j < 2; j++) {
-            sum += w(length / 2, temp[0], temp[2], bit ^ j) * w(length / 2, temp[1], temp[3], j) / 2;
+            sum += w(length / 2, subVectors[0], subVectors[2], bit ^ j) *
+                   w(length / 2, subVectors[1], subVectors[3], j) / 2;
         }
         return sum;
     } else {
-        return w(length / 2, temp[0], temp[2], u[u.size() - 1] ^ bit) * w(length / 2, temp[1], temp[3], bit) / 2;
+        return w(length / 2, subVectors[0], subVectors[2], u[u.size() - 1] ^ bit) *
+               w(length / 2, subVectors[1], subVectors[3], bit) / 2;
     }
 }
 
@@ -86,6 +88,34 @@ std::vector<int> Channel::combine(const std::vector<int> &u) {
         ret[u.size() / 2 + i] = temp_dest2[i];
     }
     return ret;
+}
+
+double Channel::logLikelihoodRatio(int length, const std::vector<int> &y, const std::vector<int> &u) const {
+    if (length == 2) {
+        return log2(w(length, y, u, 0) / w(length, y, u, 1));
+    }
+    std::vector<std::vector<int>> subVectors(4);
+    subVectors[0] = std::vector<int>(length / 2); //y[0...N/2]
+    subVectors[1] = std::vector<int>(length / 2); //y[N/2+1...N]
+    subVectors[2] = std::vector<int>(u.size() / 2); //u[0...i-1](odd)+u[0...i-1](even)
+    subVectors[3] = std::vector<int>(u.size() / 2); //u[0...i-1](enen)
+    for (int j = 0; j < length / 2; j++) {
+        subVectors[0][j] = y[j];
+        subVectors[1][j] = y[j + length / 2];
+    }
+    for (int j = 0; j < u.size() / 2; j++) {
+        subVectors[2][j] = u[2 * j] ^ u[2 * j + 1];
+        subVectors[3][j] = u[2 * j + 1];
+    }
+    if (u.size() % 2 == 0) {
+        double temp_a = logLikelihoodRatio(length / 2, subVectors[0], subVectors[2]);
+        double temp_b = logLikelihoodRatio(length / 2, subVectors[1], subVectors[3]);
+
+        return 2 * atanh(tanh(temp_a / 2) * tanh(temp_b / 2));
+    } else {
+        return (u[u.size() - 1] == 1 ? -1 : 1) * logLikelihoodRatio(length / 2, subVectors[0], subVectors[2]) +
+               logLikelihoodRatio(length / 2, subVectors[1], subVectors[3]);
+    }
 }
 
 BEC::BEC(double p) : p(p) {}

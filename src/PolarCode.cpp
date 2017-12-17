@@ -26,3 +26,7 @@ PolarCode::PolarCode(unsigned int length, unsigned int codeDimension, Channel &c
 std::vector<int> PolarCode::SuccessiveCancellationDecode(const std::vector<int> &y) const {
     return GnCosetCode::SuccessiveCancellationDecode(y, channel);
 }
+
+std::vector<int> PolarCode::LlrSCDecode(const std::vector<int> &y) const {
+    return GnCosetCode::LlrSCDecode(y, channel);
+}

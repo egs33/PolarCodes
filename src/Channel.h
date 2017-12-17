@@ -38,6 +38,15 @@ public:
     double w(int length, const std::vector<int> &y, const std::vector<int> &u, int bit) const;
 
     /**
+     * W^i_N(y,u|b)
+     * @param length N
+     * @param y contains N elements
+     * @param u contains (i-1) elements
+     * @return
+     */
+    double logLikelihoodRatio(int length, const std::vector<int> &y, const std::vector<int> &u) const;
+
+    /**
      *
      * @param n length
      * @param i index(0,...n-1)

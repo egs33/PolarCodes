@@ -27,6 +27,8 @@ public:
 
     virtual std::vector<int> SuccessiveCancellationDecode(const std::vector<int> &y, Channel &channel) const;
 
+    virtual std::vector<int> LlrSCDecode(const std::vector<int> &y, Channel &channel) const;
+
 };
 
 
