@@ -25,7 +25,7 @@ public:
 
     const std::vector<int> &getFrozenBits() const;
 
-    virtual std::vector<int> SuccessiveCancellationDecode(const std::vector<int> &y, Channel &channel) const;
+    virtual std::vector<int> SuccessiveCancellationDecode(const std::vector<int> &y, const Channel &channel) const;
 
     virtual std::vector<int> LlrSCDecode(const std::vector<int> &y, Channel &channel) const;
 

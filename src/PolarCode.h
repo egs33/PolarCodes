@@ -7,7 +7,7 @@
 
 class PolarCode : public GnCosetCode {
 protected:
-    Channel &channel;
+    const Channel &channel;
 public:
     PolarCode(unsigned int length, unsigned int codeDimension, Channel &channel);
 
