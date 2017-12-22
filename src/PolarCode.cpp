@@ -6,7 +6,7 @@ bool AscSecondElement(const std::pair<int, double> &left, const std::pair<int, d
     return left.second > right.second;
 }
 
-PolarCode::PolarCode(unsigned int length, unsigned int codeDimension, Channel &channel) : channel(channel) {
+PolarCode::PolarCode(unsigned int length, unsigned int codeDimension, const Channel &channel) : channel(channel) {
     this->frozenBits = std::vector<int>(length - codeDimension);
     this->length = length;
     std::vector<std::pair<int, double >> symmetricCapacities(length);
