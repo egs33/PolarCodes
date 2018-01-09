@@ -114,22 +114,15 @@ double Channel::logLikelihoodRatio(int length, const std::vector<int> &y, const 
     }
 }
 
-BEC::BEC(double p) : p(p) {}
-
-std::vector<int> BEC::channel(const std::vector<int> &x) const {
+std::vector<int> Channel::channel(const std::vector<int> &x) const {
     std::vector<int> ret(x.size());
-    static std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
-    std::uniform_real_distribution<double> random(0.0, 1.0);
-
     for (int i = 0; i < x.size(); ++i) {
-        if (p > random(mt)) {
-            ret[i] = 2;
-        } else {
-            ret[i] = x[i];
-        }
+        ret[i] = channel(x[i]);
     }
     return ret;
 }
+
+BEC::BEC(double p) : p(p) {}
 
 double BEC::w(int y, int x) const {
     if (y == x) {
@@ -151,20 +144,26 @@ double BEC::symmetricCapacity(int n, int i) const {
     return 2 * temp - std::pow(temp, 2);
 }
 
+int BEC::channel(int x) const {
+    static std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
+    static std::uniform_real_distribution<double> random(0.0, 1.0);
+
+    if (p > random(mt)) {
+        return 2;
+    }
+    return x;
+}
+
 BSC::BSC(double p) : p(p) {}
 
-std::vector<int> BSC::channel(const std::vector<int> &x) const {
-    std::vector<int> ret(x.size());
+int BSC::channel(int x) const {
     static std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
-    std::uniform_real_distribution<double> random(0.0, 1.0);
-    for (int i = 0; i < x.size(); ++i) {
-        if (p > random(mt)) {
-            ret[i] = 1 - x[i];
-        } else {
-            ret[i] = x[i];
-        }
+    static std::uniform_real_distribution<double> random(0.0, 1.0);
+
+    if (p > random(mt)) {
+        return 1 - x;
     }
-    return ret;
+    return x;
 }
 
 double BSC::w(int y, int x) const {

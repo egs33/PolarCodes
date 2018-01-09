@@ -9,7 +9,13 @@ public:
      * @param std:vector<int> x input of channel
      * @return output of channel
      */
-    virtual std::vector<int> channel(const std::vector<int> &x) const = 0;
+    std::vector<int> channel(const std::vector<int> &x) const;
+
+    /**
+     * @param int x input of channel
+     * @return output of channel
+     */
+    virtual int channel(int x) const = 0;
 
     /**
      * calc likelihood
@@ -63,7 +69,7 @@ private:
 public:
     explicit BEC(double p);
 
-    std::vector<int> channel(const std::vector<int> &x) const override;
+    int channel(int x) const override;
 
     double w(int y, int x) const override;
 
@@ -76,7 +82,7 @@ private:
 public:
     explicit BSC(double p);
 
-    std::vector<int> channel(const std::vector<int> &x) const override;
+    int channel(int x) const override;
 
     double w(int y, int x) const override;
 
