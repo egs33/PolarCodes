@@ -32,12 +32,8 @@ std::vector<std::vector<int>> createAllBitPatterns(int length) {
 }
 
 double Channel::w(int length, const std::vector<int> &y, const std::vector<int> &u, int bit) const {
-    if (length == 2) {
-        if (u.empty()) {
-            return (w(y[0], bit) * w(y[1], 0) + w(y[0], bit ^ 1) * w(y[1], 1)) / 2;
-        } else {
-            return w(y[0], u[0] ^ bit) * w(y[1], bit) / 2;
-        }
+    if (length == 1) {
+        return w(y[0], bit);
     }
     std::vector<std::vector<int>> subVectors(4);
     subVectors[0] = std::vector<int>(length / 2); //y[0...N/2]
@@ -91,8 +87,8 @@ std::vector<int> Channel::combine(const std::vector<int> &u) {
 }
 
 double Channel::logLikelihoodRatio(int length, const std::vector<int> &y, const std::vector<int> &u) const {
-    if (length == 2) {
-        return log2(w(length, y, u, 0) / w(length, y, u, 1));
+    if (length == 1) {
+        return log2(w(y[0], 0) / w(y[0], 1));
     }
     std::vector<std::vector<int>> subVectors(4);
     subVectors[0] = std::vector<int>(length / 2); //y[0...N/2]
@@ -154,7 +150,6 @@ double BEC::symmetricCapacity(int n, int i) const {
     double temp = symmetricCapacity(n / 2, (i - 1) / 2);
     return 2 * temp - std::pow(temp, 2);
 }
-
 
 BSC::BSC(double p) : p(p) {}
 
