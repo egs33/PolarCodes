@@ -32,8 +32,12 @@ std::vector<std::vector<int>> createAllBitPatterns(int length) {
 }
 
 double Channel::w(int length, const std::vector<int> &y, const std::vector<int> &u, int bit) const {
-    if (length == 1) {
-        return w(y[0], bit);
+    if (length == 2) {
+        if (u.empty()) {
+            return (w(y[0], bit) * w(y[1], 0) + w(y[0], bit ^ 1) * w(y[1], 1)) / 2;
+        } else {
+            return w(y[0], u[0] ^ bit) * w(y[1], bit) / 2;
+        }
     }
     std::vector<std::vector<int>> subVectors(4);
     subVectors[0] = std::vector<int>(length / 2); //y[0...N/2]
@@ -87,8 +91,8 @@ std::vector<int> Channel::combine(const std::vector<int> &u) {
 }
 
 double Channel::logLikelihoodRatio(int length, const std::vector<int> &y, const std::vector<int> &u) const {
-    if (length == 1) {
-        return log2(w(y[0], 0) / w(y[0], 1));
+    if (length == 2) {
+        return log2(w(length, y, u, 0) / w(length, y, u, 1));
     }
     std::vector<std::vector<int>> subVectors(4);
     subVectors[0] = std::vector<int>(length / 2); //y[0...N/2]
@@ -122,8 +126,6 @@ std::vector<int> Channel::channel(const std::vector<int> &x) const {
     return ret;
 }
 
-BEC::BEC(double p) : p(p) {}
-
 double BEC::w(int y, int x) const {
     if (y == x) {
         return 1 - p;
@@ -144,6 +146,10 @@ double BEC::symmetricCapacity(int n, int i) const {
     return 2 * temp - std::pow(temp, 2);
 }
 
+BEC::BEC(double p) : p(p){
+
+}
+
 int BEC::channel(int x) const {
     static std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
     static std::uniform_real_distribution<double> random(0.0, 1.0);
@@ -153,6 +159,7 @@ int BEC::channel(int x) const {
     }
     return x;
 }
+
 
 BSC::BSC(double p) : p(p) {}
 
