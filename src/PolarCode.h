@@ -14,6 +14,8 @@ public:
     std::vector<int> SuccessiveCancellationDecode(const std::vector<int> &y) const;
 
     std::vector<int> LlrSCDecode(const std::vector<int> &y) const;
+
+    std::vector<int> SCLDecode(const std::vector<int> &y, int L) const;
 };
 
 

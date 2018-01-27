@@ -109,8 +109,9 @@ double Channel::logLikelihoodRatio(int length, const std::vector<int> &y, const 
 
         return 2 * atanh(tanh(temp_a / 2) * tanh(temp_b / 2));
     } else {
-        return (u[u.size() - 1] == 1 ? -1 : 1) * logLikelihoodRatio(length / 2, subVectors[0], subVectors[2]) +
-               logLikelihoodRatio(length / 2, subVectors[1], subVectors[3]);
+        double temp = (u[u.size() - 1] == 1 ? -1 : 1) * logLikelihoodRatio(length / 2, subVectors[0], subVectors[2]) +
+                      logLikelihoodRatio(length / 2, subVectors[1], subVectors[3]);
+        return std::isnan(temp) ? 0 : temp;
     }
 }
 

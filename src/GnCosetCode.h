@@ -12,6 +12,8 @@ protected:
 
     GnCosetCode();
 
+    void duplicatePath(std::vector<std::vector<int> *> &list) const;
+
 public:
     GnCosetCode(unsigned int length, std::vector<int> informationSet, std::vector<int> frozenBits);
 
@@ -29,6 +31,7 @@ public:
 
     virtual std::vector<int> LlrSCDecode(const std::vector<int> &y, const Channel &channel) const;
 
+    virtual std::vector<int> SCLDecode(const std::vector<int> &y, int L, const Channel &channel) const;
 };
 
 
