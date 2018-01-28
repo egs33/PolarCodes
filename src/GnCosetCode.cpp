@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <map>
+#include <cmath>
 #include "GnCosetCode.h"
 #include "Channel.h"
 
@@ -84,73 +85,85 @@ std::vector<int> GnCosetCode::LlrSCDecode(const std::vector<int> &y, const Chann
     return ret;
 }
 
+double phi(double pre, double llr, int u) {
+    return pre + std::log(1 + std::exp((u == 0 ? -1 : 1) * llr));
+}
+
 std::vector<int> GnCosetCode::SCLDecode(const std::vector<int> &y, const int L, const Channel &channel) const {
-    std::vector<std::vector<int>*> list;
-    list.push_back(new std::vector<int>);
+    std::vector<std::pair<std::vector<int>*, double>> list;
+    list.emplace_back(std::make_pair(new std::vector<int>, 0));
     for (int i = 0, informationIndex = 0; i < getLength() - 1; ++i) {
         if (getInformationSet().size() <= informationIndex || i != getInformationSet()[informationIndex]) {
             // frozen bit
             for (auto &&path : list) {
-                path->push_back(getFrozenBits()[i - informationIndex]);
+                path.second = phi(path.second, channel.logLikelihoodRatio(getLength(), y, *(path.first)), getFrozenBits()[i - informationIndex]);
+                path.first->push_back(getFrozenBits()[i - informationIndex]);
             }
         } else {
             ++informationIndex;
             if (list.size() < L) {
-                duplicatePath(list);
+                duplicatePath(list, y, channel);
                 continue;
             }
             std::vector<std::pair<std::vector<int>*, double>> candidateList;
             for (auto &&path : list) {
-                const double llr0 = channel.w(getLength(), y, *path, 0);
-                const double llr1 = channel.w(getLength(), y, *path, 1);
-                auto v0 = new std::vector<int>(*path);
-                auto v1 = new std::vector<int>(*path);
+                auto v0 = new std::vector<int>(*(path.first));
+                auto v1 = new std::vector<int>(*(path.first));
+
+                candidateList.emplace_back(
+                        std::make_pair(v0, phi(path.second, channel.logLikelihoodRatio(getLength(), y, *v0), 0))
+                );
+                candidateList.emplace_back(
+                        std::make_pair(v1, phi(path.second, channel.logLikelihoodRatio(getLength(), y, *v1), 1))
+                );
                 v0->push_back(0);
                 v1->push_back(1);
-                candidateList.emplace_back(std::make_pair(v0, llr0));
-                candidateList.emplace_back(std::make_pair(v1, llr1));
-                delete path;
+                delete path.first;
             }
             list.clear();
             std::sort(candidateList.begin(), candidateList.end(),
                       [](const std::pair<std::vector<int>*, double>& a, const std::pair<std::vector<int>*, double>& b) {
-                          return a.second > b.second;
+                          return a.second < b.second;
             });
             for (int j = 0; j < L; ++j) {
-                list.push_back(candidateList[j].first);
+                list.push_back(candidateList[j]);
             }
             for (int j = L; j < candidateList.size(); ++j) {
                 delete candidateList[j].first;
             }
         }
     }
-    duplicatePath(list);
-    double maxLikelihood = -1;
-    std::vector<int>* max = nullptr;
+    duplicatePath(list, y, channel);
+    double minPathMetrics = list[0].second;
+    std::vector<int>* min = list[0].first;
     for (auto &&path : list) {
-        auto x = Channel::combine(*path);
-        const double likelihood = channel.w(y, x);
-        if (likelihood > maxLikelihood) {
-            maxLikelihood = likelihood;
-            max = path;
+        if (path.second < minPathMetrics) {
+            minPathMetrics = path.second;
+            min = path.first;
         }
     }
     std::vector<int> ret;
     for (auto &&i : getInformationSet()) {
-        ret.push_back((*max)[i]);
+        ret.push_back((*min)[i]);
     }
     for (auto &&path : list) {
-        delete path;
+        delete path.first;
     }
     return ret;
 }
 
-void GnCosetCode::duplicatePath(std::vector<std::vector<int> *> &list) const {
+void GnCosetCode::duplicatePath(std::vector<std::pair<std::vector<int>*, double>> &list, const std::vector<int> &y, const Channel &channel) const {
     const int originalSize = list.size();
     for (int j = 0; j < originalSize; ++j) {
-        auto newCandidate = new std::vector<int>(*list[j]);
-        list[j]->push_back(0);
+        const double originalPathMetrics = list[j].second;
+        auto newCandidate = new std::vector<int>(*(list[j].first));
+        list[j].second = phi(originalPathMetrics, channel.logLikelihoodRatio(getLength(), y, *(list[j].first)), 0);
+        list.emplace_back(std::make_pair(
+                newCandidate,
+                phi(originalPathMetrics, channel.logLikelihoodRatio(getLength(), y, *newCandidate), 1)
+        ));
+        list[j].first->push_back(0);
         newCandidate->push_back(1);
-        list.push_back(newCandidate);
     }
 }
+

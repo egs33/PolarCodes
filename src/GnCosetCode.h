@@ -12,7 +12,7 @@ protected:
 
     GnCosetCode();
 
-    void duplicatePath(std::vector<std::vector<int> *> &list) const;
+    void duplicatePath(std::vector<std::pair<std::vector<int>*, double>> &list, const std::vector<int> &y, const Channel &channel) const;
 
 public:
     GnCosetCode(unsigned int length, std::vector<int> informationSet, std::vector<int> frozenBits);
