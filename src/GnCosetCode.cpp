@@ -99,38 +99,28 @@ std::vector<int> GnCosetCode::SCLDecode(const std::vector<int> &y, const int L, 
                 duplicatePath(list);
                 continue;
             }
-            std::map<std::vector<int>*, std::pair<double, double>> candidateList;
-            std::vector<double> llrs;
+            std::vector<std::pair<std::vector<int>*, double>> candidateList;
             for (auto &&path : list) {
                 const double llr0 = channel.w(getLength(), y, *path, 0);
                 const double llr1 = channel.w(getLength(), y, *path, 1);
-                candidateList[path] = std::make_pair(llr0, llr1);
-                llrs.push_back(llr0);
-                llrs.push_back(llr1);
+                auto v0 = new std::vector<int>(*path);
+                auto v1 = new std::vector<int>(*path);
+                v0->push_back(0);
+                v1->push_back(1);
+                candidateList.emplace_back(std::make_pair(v0, llr0));
+                candidateList.emplace_back(std::make_pair(v1, llr1));
+                delete path;
             }
-            std::sort(llrs.begin(), llrs.end());
-            const double threshold = llrs[llrs.size() - L];
-            for (auto iter = list.begin(); iter != list.end();) {
-                if ((candidateList[*iter].first < threshold || candidateList[*iter].first == 0) &&
-                        (candidateList[*iter].second < threshold || candidateList[*iter].second == 0)) {
-                    delete *iter;
-                    iter = list.erase(iter);
-                } else {
-                    iter++;
-                }
+            list.clear();
+            std::sort(candidateList.begin(), candidateList.end(),
+                      [](const std::pair<std::vector<int>*, double>& a, const std::pair<std::vector<int>*, double>& b) {
+                          return a.second > b.second;
+            });
+            for (int j = 0; j < L; ++j) {
+                list.push_back(candidateList[j].first);
             }
-            unsigned int originalSize = list.size();
-            for (int j = 0; j < originalSize; ++j) {
-                if (candidateList[list[j]].first >= threshold && candidateList[list[j]].second >= threshold) {
-                    auto newCandidate = new std::vector<int>(*list[j]);
-                    list[j]->push_back(0);
-                    newCandidate->push_back(1);
-                    list.push_back(newCandidate);
-                } else if (candidateList[list[j]].first >= threshold) {
-                    list[j]->push_back(0);
-                } else {
-                    list[j]->push_back(1);
-                }
+            for (int j = L; j < candidateList.size(); ++j) {
+                delete candidateList[j].first;
             }
         }
     }
