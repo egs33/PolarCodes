@@ -86,6 +86,26 @@ std::vector<int> Channel::combine(const std::vector<int> &u) {
     return ret;
 }
 
+int Channel::combinedAt(const std::vector<int> &u, int x, int y) {
+    if (x == 0) {
+        return u[y];
+    }
+
+    if (y < u.size() / 2) {
+        std::vector<int> temp(u.size() / 2);
+        for (int i = 0; i < u.size() / 2; i++) {
+            temp[i] = u[2 * i] ^ u[2 * i + 1];
+        }
+        return combinedAt(temp, x - 1, y);
+    } else {
+        std::vector<int> temp(u.size() / 2);
+        for (int i = 0; i < u.size() / 2; i++) {
+            temp[i] = u[2 * i + 1];
+        }
+        return combinedAt(temp, x - 1, y - u.size() / 2);
+    }
+}
+
 double Channel::logLikelihoodRatio(int length, const std::vector<int> &y, const std::vector<int> &u) const {
     if (length == 1) {
         return log2(w(y[0], 0) / w(y[0], 1));

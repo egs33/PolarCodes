@@ -16,6 +16,15 @@ GnCosetCode::GnCosetCode(unsigned int length, std::vector<int> informationSet, s
     std::sort(this->informationSet.begin(), this->informationSet.end());
 }
 
+GnCosetCode::GnCosetCode(unsigned int length, const std::vector<int> &informationSet,
+                         const std::vector<int> &frozenBits, const std::vector<std::pair<int, int>> &sendBits) :
+        length(length), informationSet(informationSet), frozenBits(frozenBits), sendBits(sendBits) {
+    if (length != informationSet.size() + frozenBits.size()) {
+        throw std::invalid_argument("invalid length");
+    }
+    std::sort(this->informationSet.begin(), this->informationSet.end());
+}
+
 GnCosetCode::GnCosetCode(unsigned int length, std::vector<int> informationSet) :
         length(length), informationSet(informationSet) {
     if (length < informationSet.size()) {
@@ -25,7 +34,29 @@ GnCosetCode::GnCosetCode(unsigned int length, std::vector<int> informationSet) :
     this->frozenBits = std::vector<int>(length - informationSet.size(), 0);
 }
 
+GnCosetCode::GnCosetCode(unsigned int length, const std::vector<int> &informationSet,
+                         const std::vector<std::pair<int, int>> &sendBits) : length(length),
+                                                                             informationSet(informationSet),
+                                                                             sendBits(sendBits) {
+    if (length < informationSet.size()) {
+        throw std::invalid_argument("invalid length");
+    }
+    std::sort(this->informationSet.begin(), this->informationSet.end());
+    this->frozenBits = std::vector<int>(length - informationSet.size(), 0);
+}
+
+GnCosetCode::GnCosetCode(const std::vector<std::pair<int, int>> &sendBits) : sendBits(sendBits) {}
+
 std::vector<int> GnCosetCode::encode(const std::vector<int> &information) const {
+    const std::vector<int> &u = createU(information);
+    auto x = Channel::combine(u);
+    for (auto &&sendBit : sendBits) {
+        x.push_back(Channel::combinedAt(u, sendBit.first, sendBit.second));
+    }
+    return x;
+}
+
+std::vector<int> GnCosetCode::createU(const std::vector<int> &information) const {
     if (this->informationSet.size() != information.size()) {
         throw std::invalid_argument("invalid length");
     }
@@ -38,7 +69,7 @@ std::vector<int> GnCosetCode::encode(const std::vector<int> &information) const 
             u[i] = this->frozenBits[i - informationIndex];
         }
     }
-    return Channel::combine(u);
+    return u;
 }
 
 unsigned int GnCosetCode::getLength() const {

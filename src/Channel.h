@@ -61,6 +61,8 @@ public:
     virtual double symmetricCapacity(int n, int i) const = 0;
 
     static std::vector<int> combine(const std::vector<int> &u);
+
+    static int combinedAt(const std::vector<int> &u, int x, int y);
 };
 
 class BEC : public Channel {
