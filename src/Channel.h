@@ -2,6 +2,7 @@
 #define POLAR2_CHANNEL_H
 
 #include <vector>
+#include <map>
 
 class Channel {
 public:
@@ -51,6 +52,10 @@ public:
      * @return
      */
     double logLikelihoodRatio(int length, const std::vector<int> &y, const std::vector<int> &u) const;
+
+
+    double logLikelihoodRatioAt(int length, const std::vector<int> &received, const std::map<std::pair<int,int>,int> &interBits,
+                                    const std::vector<int> &u, int x, int y) const;
 
     /**
      *

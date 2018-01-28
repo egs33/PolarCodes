@@ -15,7 +15,8 @@ protected:
 
     explicit GnCosetCode(const std::vector<std::pair<int, int>> &sendBits);
 
-    void duplicatePath(std::vector<std::pair<std::vector<int>*, double>> &list, const std::vector<int> &y, const Channel &channel) const;
+    void duplicatePath(std::vector<std::pair<std::vector<int>*, double>> &list, const std::vector<int> &y,
+                       const std::map<std::pair<int,int>, int> &interNodes, const Channel &channel) const;
 
 public:
 

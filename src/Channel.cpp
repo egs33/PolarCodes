@@ -135,6 +135,32 @@ double Channel::logLikelihoodRatio(int length, const std::vector<int> &y, const 
     }
 }
 
+double Channel::logLikelihoodRatioAt(int length, const std::vector<int> &received,
+                                         const std::map<std::pair<int, int>, int> &interBits,
+                                         const std::vector<int> &u, const int x, const int y) const {
+    const auto &iter = interBits.find(std::make_pair(x, y));
+    const double llr = (iter != interBits.end()) ? log2(w(iter->second, 0) / w(iter->second, 1)) : 0;
+    if (length == 1){
+        return log2(w(received[y], 0) / w(received[y], 1)) + llr;
+    }
+    std::vector<std::vector<int>> subVectors(2);
+    subVectors[0] = std::vector<int>(u.size() / 2); //u[0...i-1](odd)+u[0...i-1](even)
+    subVectors[1] = std::vector<int>(u.size() / 2); //u[0...i-1](odd)
+    for (int j = 0; j < u.size() / 2; j++) {
+        subVectors[0][j] = u[2 * j] ^ u[2 * j + 1];
+        subVectors[1][j] = u[2 * j + 1];
+    }
+    int criterion = (y / length) * length;
+    double temp0 = logLikelihoodRatioAt(length / 2, received, interBits, subVectors[0], x + 1, (y - criterion) / 2 + criterion);
+    double temp1 = logLikelihoodRatioAt(length / 2, received, interBits, subVectors[1], x + 1, (y - criterion) / 2 + criterion + length / 2);
+    if (y % 2 == 0){
+        return 2 * atanh(tanh(temp0 / 2) * tanh(temp1 / 2)) + llr;
+    } else {
+        const double temp = (u[u.size() - 1] == 1 ? -1 : 1) * temp0 + temp1 + llr;
+        return std::isnan(temp) ? 0 : temp;
+    }
+}
+
 std::vector<int> Channel::channel(const std::vector<int> &x) const {
     std::vector<int> ret(x.size());
     for (int i = 0; i < x.size(); ++i) {
