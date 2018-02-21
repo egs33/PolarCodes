@@ -2,7 +2,7 @@
 #define POLARCODE_GNCOSETCODE_H
 
 #include <vector>
-#include "Channel.h"
+#include "channel/Channel.h"
 
 class GnCosetCode {
 protected:

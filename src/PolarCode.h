@@ -3,7 +3,7 @@
 
 
 #include "GnCosetCode.h"
-#include "Channel.h"
+#include "channel/Channel.h"
 
 class PolarCode : public GnCosetCode {
 protected:

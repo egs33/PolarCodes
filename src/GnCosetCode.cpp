@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include "GnCosetCode.h"
-#include "Channel.h"
+#include "channel/Channel.h"
 
 
 GnCosetCode::GnCosetCode() = default;

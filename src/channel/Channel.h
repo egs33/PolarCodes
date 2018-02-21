@@ -63,31 +63,4 @@ public:
     static std::vector<int> combine(const std::vector<int> &u);
 };
 
-class BEC : public Channel {
-private:
-    double p;
-public:
-    explicit BEC(double p);
-
-    int channel(int x) const override;
-
-    double w(int y, int x) const override;
-
-    double symmetricCapacity(int n, int i) const override;
-};
-
-class BSC : public Channel {
-private:
-    double p;
-public:
-    explicit BSC(double p);
-
-    int channel(int x) const override;
-
-    double w(int y, int x) const override;
-
-    double symmetricCapacity(int n, int i) const override;
-};
-
-
 #endif //POLAR2_CHANNEL_H
