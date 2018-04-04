@@ -1,3 +1,4 @@
+#include <random>
 #include "BSC.h"
 
 BSC::BSC(double p) : p(p) {}
