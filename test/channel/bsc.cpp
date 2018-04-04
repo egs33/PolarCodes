@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../src/channel/BSC.h"
+#include "channel/BSC.h"
 
 TEST(BSC, likelihood) {
     BSC bsc(0.1);

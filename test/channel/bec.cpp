@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../src/channel/BEC.h"
+#include "channel/BEC.h"
 
 TEST(BEC, likelihood) {
     BEC bec(0.1);
