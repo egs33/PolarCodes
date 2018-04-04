@@ -175,3 +175,7 @@ dkms.conf
 Makefile
 cmake_install.cmake
 CTestTestfile.cmake
+CMakeCache.txt
+
+polar_code
+channel-test
