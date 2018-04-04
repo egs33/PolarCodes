@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: egs33/cmake
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - RUN: cmake .
+      - RUN: make
+      - RUN: ctest -V
