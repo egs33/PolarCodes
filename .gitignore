@@ -114,5 +114,8 @@ cmake_install.cmake
 CTestTestfile.cmake
 CMakeCache.txt
 
+CMakeFiles
+
 polar_code
 channel-test
+polar-code-test
