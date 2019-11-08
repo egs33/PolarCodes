@@ -34,3 +34,7 @@ std::vector<int> PolarCode::LlrSCDecode(const std::vector<int> &y) const {
 std::vector<int> PolarCode::SCLDecode(const std::vector<int> &y, int L) const {
     return GnCosetCode::SCLDecode(y, L, channel);
 }
+
+std::vector<std::vector<int>> PolarCode::SCLDecode2(const std::vector<int> &y, int L) const {
+    return GnCosetCode::SCLDecode2(y, L, channel);
+}

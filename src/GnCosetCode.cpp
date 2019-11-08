@@ -211,3 +211,80 @@ void GnCosetCode::duplicatePath(std::vector<std::pair<std::vector<int> *, double
     }
 }
 
+std::vector<std::vector<int>> GnCosetCode::SCLDecode2(const std::vector<int> &received, const int L, const Channel &channel) const {
+    const std::vector<int> y(received.begin(), received.begin() + getLength());
+    std::map<std::pair<int, int>, int> interNodes;
+    for (int i = 0; i < sendBits.size(); ++i) {
+        interNodes[sendBits[i]] = received[getLength() + i];
+    }
+    std::vector<std::pair<std::vector<int> *, double>> list;
+    list.emplace_back(std::make_pair(new std::vector<int>, 0));
+    for (int i = 0, informationIndex = 0; i < getLength(); ++i) {
+        if (getInformationSet().size() <= informationIndex || i != getInformationSet()[informationIndex]) {
+            // frozen bit
+            for (auto &&path : list) {
+                path.second = phi(path.second,
+                                  channel.logLikelihoodRatioAt(getLength(), y, interNodes, *(path.first), 0, i),
+                                  getFrozenBits()[i - informationIndex]);
+                path.first->push_back(getFrozenBits()[i - informationIndex]);
+            }
+        } else {
+            ++informationIndex;
+            if (list.size() < L) {
+                duplicatePath(list, y, interNodes, channel);
+                continue;
+            }
+            std::vector<std::pair<std::vector<int> *, double>> candidateList;
+            for (auto &&path : list) {
+                auto v0 = new std::vector<int>(*(path.first));
+                auto v1 = new std::vector<int>(*(path.first));
+
+                candidateList.emplace_back(std::make_pair(v0, phi(
+                        path.second, channel.logLikelihoodRatioAt(getLength(), y, interNodes, *v0, 0, i), 0)
+                ));
+                candidateList.emplace_back(std::make_pair(v1, phi(
+                        path.second, channel.logLikelihoodRatioAt(getLength(), y, interNodes, *v1, 0, i), 1)
+                ));
+                v0->push_back(0);
+                v1->push_back(1);
+                delete path.first;
+            }
+            list.clear();
+            std::sort(candidateList.begin(), candidateList.end(),
+                      [](const std::pair<std::vector<int> *, double> &a, const std::pair<std::vector<int> *, double> &b) {
+                          return a.second < b.second;
+                      });
+            for (int j = 0; j < L; ++j) {
+                list.push_back(candidateList[j]);
+            }
+            for (int j = L; j < candidateList.size(); ++j) {
+                delete candidateList[j].first;
+            }
+        }
+    }
+//    duplicatePath(list, y, interNodes, channel);
+//    double minPathMetrics = list[0].second;
+//    std::vector<int> *min = list[0].first;
+//    for (auto &&path : list) {
+//        if (path.second < minPathMetrics) {
+//            minPathMetrics = path.second;
+//            min = path.first;
+//        }
+//    }
+//    std::vector<int> ret;
+//    for (auto &&i : getInformationSet()) {
+//        ret.push_back((*min)[i]);
+//    }
+//    for (auto &&path : list) {
+//        delete path.first;
+//    }
+    std::vector<std::vector<int>> ret;
+    for(auto l: list) {
+        std::vector<int> temp;
+        for (auto &&i : getInformationSet()) {
+            temp.push_back((*l.first)[i]);
+        }
+        ret.emplace_back(temp);
+    }
+    return ret;
+}

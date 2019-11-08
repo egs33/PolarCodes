@@ -45,6 +45,8 @@ public:
     virtual std::vector<int> LlrSCDecode(const std::vector<int> &y, const Channel &channel) const;
 
     virtual std::vector<int> SCLDecode(const std::vector<int> &y, int L, const Channel &channel) const;
+
+    virtual std::vector<std::vector<int>> SCLDecode2(const std::vector<int> &y, int L, const Channel &channel) const;
 };
 
 

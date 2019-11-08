@@ -17,6 +17,8 @@ public:
     std::vector<int> LlrSCDecode(const std::vector<int> &y) const;
 
     std::vector<int> SCLDecode(const std::vector<int> &y, int L) const;
+
+    std::vector<std::vector<int>> SCLDecode2(const std::vector<int> &y, int L) const;
 };
 
 
